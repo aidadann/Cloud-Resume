@@ -1,4 +1,4 @@
-const apiUrl = "http://localhost:7071/api/GetVisitorCount";
+const apiUrl = "https://func-cloudresume-aidan1911.azurewebsites.net/api/GetVisitorCount";
 async function fetchVisitorCount() {
     const counterElement = document.getElementById('counter');
     try {
