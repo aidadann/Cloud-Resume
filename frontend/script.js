@@ -1,4 +1,4 @@
-const apiUrl = "https://placeholder-api-url.com/api/getCounter";
+const apiUrl = "http://localhost:7071/api/GetVisitorCount";
 async function fetchVisitorCount() {
     const counterElement = document.getElementById('counter');
     try {
