@@ -4,10 +4,10 @@ on:
   push:
     branches: ["main"]
     paths:
-      - 'backend/**' # Only run this pipeline if files in the backend folder changed
+      - 'backend/**'
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'func-cloudresume-aidan1911' # UPDATE THIS TO YOUR FUNCTION APP NAME
+  AZURE_FUNCTIONAPP_NAME: 'func-cloudresume-aidan1911' # Ensure this is correct
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: 'Install dependencies'
+    - name: 'Install dependencies locally for testing'
       run: |
         python -m pip install --upgrade pip
         pip install -r backend/function_app/requirements.txt
@@ -32,6 +32,11 @@ jobs:
       run: |
         cd backend
         python -m pytest tests/
+    
+    - name: 'Build Python Packages for Azure'
+      run: |
+        # Install the dependencies directly into the folder Azure expects!
+        pip install --target="./backend/function_app/.python_packages/lib/site-packages" -r backend/function_app/requirements.txt
 
     - name: 'Deploy to Azure Functions'
       uses: Azure/functions-action@v1
