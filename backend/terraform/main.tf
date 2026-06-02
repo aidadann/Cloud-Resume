@@ -106,5 +106,8 @@ resource "azurerm_linux_function_app" "function_app" {
     
     # Link App Insights for logging
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.app_insights.instrumentation_key
+
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+
   }
 }
