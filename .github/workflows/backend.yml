@@ -1,0 +1,42 @@
+name: Deploy Python project to Azure Function App
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'backend/**' # Only run this pipeline if files in the backend folder changed
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'func-cloudresume-aidan1911' # UPDATE THIS TO YOUR FUNCTION APP NAME
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: 'Install dependencies'
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r backend/function_app/requirements.txt
+        pip install pytest
+
+    - name: 'Run Unit Tests'
+      run: |
+        cd backend
+        python -m pytest tests/
+
+    - name: 'Deploy to Azure Functions'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: './backend/function_app'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
