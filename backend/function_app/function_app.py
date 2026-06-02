@@ -16,7 +16,7 @@ def GetVisitorCount(req: func.HttpRequest) -> func.HttpResponse:
         connection_string = os.environ["CosmosDBConnectionString"]
         
         client = cosmos_client.CosmosClient.from_connection_string(connection_string)
-        database = client.get_database_client("CloudResumeDB")
+        database = client.get_database_client("ResumeDB")
         container = database.get_container_client("Counter")
         
         try:
