@@ -4,7 +4,7 @@ Hey there! 👋 Welcome to the repository for my **Azure Cloud Resume Challenge*
 
 This project isn't just a digital version of my resume—it's a full-stack, cloud-native application built from scratch to demonstrate my skills in Cloud Engineering, DevOps, and Serverless Architecture on Microsoft Azure.
 
-Check out the live site here: **cloudresume-aidan-amh2fchwhxdbcde5.z02.azurefd.net**
+Check out the live site here: cloudresume-aidan-amh2fchwhxdbcde5.z02.azurefd.net 
 
 ---
 
