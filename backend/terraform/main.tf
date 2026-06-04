@@ -9,11 +9,6 @@ resource "azurerm_storage_account" "frontend" {
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-
-  static_website {
-    index_document     = "index.html"
-    error_404_document = "index.html"
-  }
 }
 
 # Monitoring: Log Analytics & Application Insights
@@ -111,3 +106,29 @@ resource "azurerm_linux_function_app" "function_app" {
 
   }
 }
+
+# =========================================================
+# Azure Static Web Apps (Frontend Hosting)
+# =========================================================
+resource "azurerm_static_web_app" "swa" {
+  name                = "swa-cloudresume-aidan1911"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = "East Asia"
+  sku_tier            = "Free"
+  sku_size            = "Free"
+}
+
+# =========================================================
+# Outputs
+# =========================================================
+output "swa_default_host_name" {
+  value       = "https://${azurerm_static_web_app.swa.default_host_name}"
+  description = "The URL of the new Azure Static Web App."
+}
+
+output "swa_deployment_token" {
+  value       = azurerm_static_web_app.swa.api_key
+  sensitive   = true
+  description = "The deployment token required by GitHub Actions."
+}
+
