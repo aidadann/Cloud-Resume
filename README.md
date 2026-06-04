@@ -4,7 +4,7 @@ Hey there! 👋 Welcome to the repository for my **Azure Cloud Resume Challenge*
 
 This project isn't just a digital version of my resume—it's a full-stack, cloud-native application built from scratch to demonstrate my skills in Cloud Engineering, DevOps, and Serverless Architecture on Microsoft Azure.
 
-Check out the live site here: https://cloudresume-aidan-amh2fchwhxdbcde5.z02.azurefd.net 
+Check out the live site here: https://thankful-sky-05855b100.7.azurestaticapps.net
 
 ---
 
@@ -14,17 +14,15 @@ Here is a high-level look at how the different cloud services interact:
 
 ```mermaid
 graph LR
-    User([👨‍💻 User]) --> FD[🌐 Azure Front Door]
-    FD --> Blob[🗄️ Azure Blob Storage<br/>Static Website]
-    Blob --> JS[⚡ JavaScript Fetch]
+    User([👨‍💻 User]) --> SWA[🌐 Azure Static Web Apps<br/>Global CDN & Hosting]
+    SWA --> JS[⚡ JavaScript Fetch]
     JS --> Func[⚙️ Azure Function<br/>Serverless Python]
     Func --> DB[(🪐 Cosmos DB<br/>NoSQL)]
 ```
 
 ### The Stack
 * **Frontend:** Semantic HTML5, Vanilla CSS3, Vanilla JavaScript.
-* **Storage:** Azure Blob Storage (Static Website Hosting).
-* **Delivery:** Azure Front Door (Global Edge CDN, HTTPS, Caching).
+* **Hosting & Delivery:** Azure Static Web Apps (Global Edge CDN, HTTPS, Static Hosting).
 * **Backend API:** Azure Functions (Python V2 Programming Model, Serverless Consumption Plan).
 * **Database:** Azure Cosmos DB (Serverless, NoSQL).
 * **Infrastructure as Code (IaC):** Terraform.
@@ -38,7 +36,7 @@ graph LR
 Building this architecture was broken down into logical phases, ensuring every layer was rock-solid before moving to the next.
 
 ### 1. Frontend & Static Hosting
-I built a clean, responsive resume using HTML and CSS. Instead of paying for a traditional web server, I deployed the assets to an **Azure Blob Storage** account configured for static website hosting. To ensure the site was fast globally and secured with HTTPS, I routed traffic through **Azure Front Door**.
+I built a clean, responsive resume using HTML and CSS. Instead of paying for a traditional web server, I deployed the assets to **Azure Static Web Apps**. This fully managed service provides a global CDN, free SSL certificates, and serverless hosting, ensuring the site is incredibly fast globally at zero cost.
 
 ### 2. The Serverless API (Backend)
 To track how many people visit my resume, I wrote a serverless HTTP-triggered API using **Python**. The API connects to an **Azure Cosmos DB** instance to read the current visitor count, increments it, saves the new value, and returns it to the frontend.
@@ -51,7 +49,7 @@ ClickOps is a thing of the past. I codified my backend infrastructure using **Te
 
 ### 5. CI/CD Pipelines
 I built two separate **GitHub Actions** workflows to automate deployments based on the principle of least privilege:
-* **Frontend Pipeline:** Triggers only when `frontend/` files change. Uses a Service Principal to log into Azure CLI and upload static assets directly to Blob Storage.
+* **Frontend Pipeline:** Triggers only when `frontend/` files change. Uses the official Azure Static Web Apps Deploy action to seamlessly publish the HTML/CSS/JS assets to the global edge network.
 * **Backend Pipeline:** Triggers only when `backend/` files change. It provisions an Ubuntu runner, installs Python dependencies directly into a `.python_packages` directory, runs the `pytest` suite, and if tests pass, zips the code and deploys it to Azure Functions using a Publish Profile.
 
 ---
@@ -62,7 +60,7 @@ No cloud project is complete without some intense debugging sessions. Here are a
 
 * **The Kudu Deployment Catch-22:** When deploying a Python Azure Function via GitHub Actions, the action natively overrides remote builds on the server. I solved this by explicitly pre-building the `.python_packages` directory on the GitHub runner before Zipping the deployment package.
 * **Atomic Deployments:** To prevent the Azure Function from returning a `404 Not Found` during deployment swaps, I configured the app setting `WEBSITE_RUN_FROM_PACKAGE = "1"` in Terraform, forcing Azure to mount the zip file directly as a read-only filesystem.
-* **CDN Caching:** Azure Front Door caches edge content heavily. When my CI/CD pipeline successfully pushed new CSS styles, the website didn't update! I learned how to track the deployment directly to Blob Storage and manually purge the CDN edge cache.
+* **Cost Optimization (The Great CDN Pivot):** Originally, I deployed this using Azure Blob Storage and Azure Front Door. However, I discovered Microsoft recently deprecated the free classic CDN tier, forcing a $35/month base fee for Front Door. I quickly refactored my Terraform IaC and GitHub Actions pipelines to migrate the entire frontend to Azure Static Web Apps, bringing my monthly bill back down to exactly $0 while maintaining a global edge CDN.
 
 ---
 
